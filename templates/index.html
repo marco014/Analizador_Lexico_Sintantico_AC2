@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222831;
+            color: #eaeaea;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #ff5722; /* Neón naranja */
+        }
+        h2 {
+            color: #ff5722; /* Neón naranja */
+        }
+        form {
+            margin-bottom: 20px;
+            background-color: #393e46;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Centrar contenido del formulario */
+        }
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c5c6c7;
+        }
+        form textarea,
+        form input[type="submit"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 20px;
+            box-sizing: border-box;
+        }
+        form textarea {
+            background-color: #222831;
+            color: #eaeaea;
+            border: 2px solid #ff5722; /* Neón naranja */
+            transition: border-color 0.3s;
+            width: 80%; /* Ajuste del ancho del cuadro de texto */
+            height: 150px; /* Ajuste de la altura del cuadro de texto */
+            margin: 0 auto; /* Centrando el cuadro de texto */
+        }
+        form textarea:focus {
+            border-color: #ff784e; /* Neón naranja más claro */
+        }
+        form input[type="submit"] {
+            background-color: #ff5722; /* Neón naranja */
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 200px; /* Ajuste del ancho del botón */
+            margin: 0 auto; /* Centrando el botón */
+            display: block; /* Para centrar el botón */
+        }
+        form input[type="submit"]:hover {
+            background-color: #ff784e; /* Neón naranja más claro */
+        }
+        .table-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        table {
+            width: 100%;
+            max-width: 500px;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #393e46;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        table th, table td {
+            border: 1px solid #ff5722; /* Neón naranja */
+            padding: 10px;
+            text-align: left;
+            color: #eaeaea;
+        }
+        th {
+            background-color: #ff5722; /* Neón naranja */
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #222831;
+        }
+        tr td:first-child,
+        tr th:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+        tr td:last-child,
+        tr th:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+        .error {
+            color: #ff3b3b; /* Neón rojo */
+        }
+    </style>
+    <title>Analizador Léxico y Sintáctico</title>
+</head>
+<body>
+    <h1>Analizador Léxico y Sintáctico</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="code">Ingresa el código aquí:</label><br>
+        <!-- Cuadro de texto más pequeño y centrado -->
+        <textarea name="code" rows="6" cols="50">{{ code }}</textarea><br><br>
+        <!-- Botón más pequeño y centrado -->
+        <input type="submit" value="Ejecutar">
+    </form>
+
+    <div class="table-container">
+        {% if lexical_result %}
+        <div>
+            <h2>Análisis Léxico</h2>
+            <table>
+                <tr>
+                    <th>Linea</th>
+                    <th>Posición</th>
+                    <th>Tipo de Caracter</th>
+                    <th>Caracter</th>
+                    <th>Palabra Reservada</th>
+                </tr>
+                {% for line in lexical_result %}
+                <tr>
+                    <td>{{ line[0] }}</td>
+                    <td>{{ line[1] }}</td>
+                    <td>{{ line[2] }}</td>
+                    <td>{% if line[2] != 'Palabra reservada' %}{{ line[3] }}{% endif %}</td>
+                    <td>{% if line[2] == 'Palabra reservada' %}{{ line[3] }}{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+
+        {% if syntactic_result %}
+        <div>
+            <h2>Análisis Sintáctico</h2>
+            <table>
+                <tr>
+                    <th>Linea</th>
+                    <th>Tipo de Estructura</th>
+                    <th>Estructura Correcta</th>
+                    <th>Estructura Incorrecta</th>
+                </tr>
+                {% for line in syntactic_result %}
+                <tr>
+                    <td>{{ line[0] }}</td>
+                    <td>{{ line[1] }}</td>
+                    <td>{% if line[2] %}X{% endif %}</td>
+                    <td>{% if not line[2] %}X{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
