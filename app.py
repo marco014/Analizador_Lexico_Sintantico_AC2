@@ -39,19 +39,24 @@ def analizar_tacos(code):
 
 def analizar_machetes(code):
     resultado = []
+    correct_keyword = 'system.out.println'
     lineas = code.split('\n')
     for numero_machete, machete in enumerate(lineas, start=1):
-        if 'for' in machete:
-            match = re.match(r'\s*for\s*\(\s*int\s+\w+\s*=\s*\d+\s*;\s*\w+\s*(<|>|<=|>=)\s*\d+\s*;\s*\w+(\+\+|--)\s*\)\s*{', machete)
-            if not match:
-                resultado.append((numero_machete, 'For', False))
+        stripped_line = machete.strip()
+        if stripped_line.startswith('system.out.'):
+            if stripped_line.startswith(correct_keyword):
+                resultado.append((numero_machete, correct_keyword, True))
             else:
-                resultado.append((numero_machete, 'For', True))
-        elif 'system.out.println' in machete:
-            if re.match(r'\s*system\.out\.println\s*\(\s*".*"\s*\)\s*;', machete):
-                resultado.append((numero_machete, 'system.out.println', True))
-            else:
-                resultado.append((numero_machete, 'system.out.println', False))
+                resultado.append((numero_machete, stripped_line.split('(')[0], False))
+        elif 'system' in stripped_line or '.out' in stripped_line:
+            resultado.append((numero_machete, stripped_line.split('(')[0], False))
+        else:
+            if 'for' in stripped_line:
+                match = re.match(r'\s*for\s*\(\s*int\s+\w+\s*=\s*\d+\s*;\s*\w+\s*(<|>|<=|>=)\s*\d+\s*;\s*\w+(\+\+|--)\s*\)\s*{', stripped_line)
+                if not match:
+                    resultado.append((numero_machete, 'For', False))
+                else:
+                    resultado.append((numero_machete, 'For', True))
     return resultado
 
 @app.route('/', methods=['GET', 'POST'])
